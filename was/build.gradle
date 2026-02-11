@@ -1,29 +1,68 @@
 plugins {
-    id 'java'
-    id 'application'
+    id "java"
+    id "org.springframework.boot" version "3.3.2"
+    id "io.spring.dependency-management" version "1.1.6"
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+group = "com.sks.erpbss.be.sp"
+version = "0.0.1-RELEASE"
+description = "SAP BTP SP Service"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// gradle.properties 값을 기본으로 사용하고, 없으면 안전한 기본값으로 대체합니다.
+def springCloudVersion = (findProperty("springCloudVersion") ?: "2023.0.2").toString()
+def springDocSwaggerVersion = (findProperty("springDocSwaggerVersion") ?: "2.5.0").toString()
+def lombokVersion = (findProperty("lombokVersion") ?: "1.18.34").toString()
+def erpBssCommonLibVersion = (findProperty("erpBssCommonLibVersion") ?: "0.0.1-RELEASE").toString()
+
+// Spring Cloud 계열 버전 정합성(BOM)
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
 
 repositories {
     mavenCentral()
+    // 폐쇄망/사내 저장소를 사용할 때 활성화하세요.
+    // maven {
+    //     url = uri("https://your-private-repo.example.com/maven")
+    // }
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+    // 핵심 런타임 의존성(현재 단일 프로젝트 기준)
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocSwaggerVersion}"
 
-test {
-    useJUnitPlatform()
-}
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-application {
-    mainClass = 'org.example.Main'
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    implementation "io.github.openfeign:feign-core:13.5"
+    implementation "org.springframework:spring-tx"
+
+    // 사진 기준 항목과 유사하게 유지하되, 폐쇄망/사내 환경에서만 활성화 권장:
+    // implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${findProperty('mybatisSpringBootStarterVersion')}"
+    // implementation "com.sap.cloud.db.jdbc:ngdbc:${findProperty('sapBtpNgdbcVersion')}"
+    // implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    // implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${findProperty('springCircuitBreakerResilience4jVersion')}"
+    // implementation "io.github.openfeign:feign-okhttp"
+
+    // 사내 common-lib를 JAR/Maven 의존성으로 쓸 때 사용:
+    // implementation "com.sks.erpbss.be.sp:be-sp-common-lib:${erpBssCommonLibVersion}"
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
+}
+
+tasks.named("test") {
+    useJUnitPlatform()
 }

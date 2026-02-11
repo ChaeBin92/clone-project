@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>귀여운 고양이</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        h1 {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .caption {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* CSS for the cat */
+        .cat {
+            position: relative;
+            width: 200px;
+            height: 180px;
+            margin: 50px auto;
+        }
+
+        .head {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background-color: #fca3b7; /* Light pink for cat */
+            border-radius: 50%;
+            top: 30px;
+            left: 25px;
+            z-index: 2;
+        }
+
+        .ear {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #fca3b7; /* Light pink for cat */
+            border-radius: 50% 50% 0 0;
+            z-index: 1;
+        }
+
+        .ear.left {
+            top: 0;
+            left: 15px;
+            transform: rotate(-30deg);
+        }
+
+        .ear.right {
+            top: 0;
+            right: 15px;
+            transform: rotate(30deg);
+        }
+
+        .eye {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #333; /* Black eyes */
+            border-radius: 50%;
+            top: 60px;
+        }
+
+        .eye.left {
+            left: 40px;
+        }
+
+        .eye.right {
+            right: 40px;
+        }
+
+        .nose {
+            position: absolute;
+            width: 15px;
+            height: 10px;
+            background-color: #ffcccc; /* Pink nose */
+            border-radius: 50%;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+
+        .whisker-group {
+            position: absolute;
+            top: 100px;
+            width: 50px;
+            height: 30px;
+        }
+
+        .whisker-group.left {
+            left: 0;
+        }
+
+        .whisker-group.right {
+            right: 0;
+        }
+
+        .whisker {
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: #333;
+            transform-origin: 0% 50%;
+        }
+
+        .whisker:nth-child(1) {
+            top: 5px;
+            left: 0;
+            transform: rotate(10deg);
+        }
+
+        .whisker:nth-child(2) {
+            top: 20px;
+            left: 0;
+            transform: rotate(-10deg);
+        }
+
+        .whisker-group.right .whisker {
+            transform-origin: 100% 50%;
+            right: 0;
+        }
+
+        .whisker-group.right .whisker:nth-child(1) {
+            top: 5px;
+            transform: rotate(-10deg);
+        }
+
+        .whisker-group.right .whisker:nth-child(2) {
+            top: 20px;
+            transform: rotate(10deg);
+        }
+    </style>
+</head>
+<body>
+    <h1>세상에서 제일 귀여운 고양이</h1>
+        <div class="cat">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+            <div class="head">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="nose"></div>
+                <div class="whisker-group left">
+                    <div class="whisker"></div>
+                    <div class="whisker"></div>
+                </div>
+                <div class="whisker-group right">
+                    <div class="whisker"></div>
+                    <div class="whisker"></div>
+                </div>
+            </div>
+        </div>
+    <p class="caption">야옹!</p>
+</body>
+</html>
