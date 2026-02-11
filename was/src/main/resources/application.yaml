@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: be-sp-service
+  profiles:
+    active: local
+  config:
+    import: optional:classpath:application-common.yaml
+

@@ -132,3 +132,62 @@
 - ./gradlew compileJava -q 성공
 
 ---
+
+## [2026-02-11 17:48:19 KST] SpSvcMainApp 원복 + 개선안 주석화
+
+**Type**: 수정
+
+**Affected Files**:
+- D:\workspace\clone-project\was\src\main\java\com\sks\erpbss\be\sp\SpSvcMainApp.java
+- D:\workspace\clone-project\was\MODIFY_HISTORY.md
+
+**Changes**:
+- SpSvcMainApp 실행 코드를 최초 형태로 유지하도록 복원 (public class, 기본 main만 유지).
+- 이전에 적용했던 inal/private constructor 구조 변경은 제거.
+- 개선 아이디어는 런타임 영향이 없도록 파일 하단 주석 블록으로 이동:
+  - 엔트리포인트 클래스 인스턴스화 방지 패턴 제안
+  - 보안 자동설정 제외 이유 및 @EnableAsync + TaskExecutor 구성 권장사항
+- 파일 인코딩 규칙 점검: UTF-8, BOM 없음 확인.
+
+**Reason**:
+- 사용자 요청에 따라 "원본 동작 코드는 유지"하고, 개선 제안은 참고 정보로만 남기기 위함.
+
+**Validation**:
+- SpSvcMainApp.java 코드 구조 원복 확인
+- UTF-8(BOM 없음) 확인
+
+---
+
+## [2026-02-11 18:04:33 KST] YAML 리소스 규칙 적용 및 기본 설정 파일 정리
+
+**Type**: 추가
+
+**Affected Files**:
+- D:\workspace\clone-project\was\src\main\resources\application.yaml
+- D:\workspace\clone-project\was\src\main\resources\application-local.yaml
+- D:\workspace\clone-project\was\src\main\resources\application-common.yaml
+- D:\workspace\clone-project\was\MODIFY_HISTORY.md
+
+**Changes**:
+- src/main/resources를 YAML 설정의 기준 경로(canonical)로 확정.
+- 최소 실행 세트 파일 생성:
+  - pplication.yaml
+  - pplication-local.yaml
+- pplication-common.yaml 생성 및 pplication.yaml에서 명시적 import 설정:
+  - spring.config.import: optional:classpath:application-common.yaml
+- uild/resources/main/**은 생성 산출물로 간주하여 수정/복제 대상에서 제외.
+- src/main/java/resources 경로 사용 여부 점검:
+  - 디렉터리 없음
+  - uild.gradle 내 sourceSets.main.resources 커스텀 설정 없음
+
+**Reason**:
+- YAML 리소스 관리 규칙 문서(yaml_resource_rules_for_ai.md)에 따라 설정 파일 위치와 로딩 방식을 표준화하고,
+  최소 구성으로 ootRun 가능 상태를 확보하기 위함.
+
+**Validation**:
+- src/main/resources에 YAML 3종 파일 생성 확인
+- UTF-8 (BOM 없음) 확인
+- ./gradlew.bat bootRun 실행 시도
+  - 실패 원인: 로컬 JVM 8, 프로젝트 요구사항은 Java 17+
+
+---
