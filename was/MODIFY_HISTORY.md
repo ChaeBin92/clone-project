@@ -1,3 +1,44 @@
+## [2026-02-20 15:56:09 KST] MODIFY_HISTORY 대비 소스 불일치 및 주석-구현 불일치 정합성 수정
+
+**Type**: 수정
+
+**Affected Files**:
+- `build.gradle`
+- `src/main/java/com/sks/erpbss/be/sp/SpSvcMainApp.java`
+- `src/main/java/com/sks/erpbss/be/sp/cmmn/client/ExchangeRateClient.java`
+- `src/main/java/com/sks/erpbss/be/sp/dashboard/service/DashboardService.java`
+- `src/main/java/com/sks/erpbss/be/sp/cmmn/CommonExceptionHandler.java`
+- `src/main/resources/application-local.yaml`
+- `MODIFY_HISTORY.md`
+
+**Changes**:
+- MODIFY_HISTORY 기록과 실제 소스 불일치 항목 정리:
+  - `build.gradle`에서 `spring-cloud-starter-openfeign` 활성화.
+  - `SpSvcMainApp`에 `@EnableFeignClients` 복구.
+- 주석만 남아 있던 환율 연동 예시성 구간을 실제 동작 기준으로 정리:
+  - `ExchangeRateClient` 엔드포인트를 `/latest/{base}` 형태로 명확화.
+  - `application-local.yaml` 기본 URL을 `https://open.er-api.com/v6`로 조정.
+- `DashboardService` 정합성 개선:
+  - `base/target` 필수값 검증 추가(400).
+  - 통화코드 대문자 정규화 추가.
+  - `CommonException`은 상태코드를 보존하도록 별도 catch 분리.
+  - 불필요한 주석성 문구(Codex Design) 제거.
+- `CommonExceptionHandler` 개선:
+  - messageSource 조회 실패 시 원문 메시지로 fallback 되도록 `resolveMessage` 추가.
+  - `CommonException` 처리 경로에서 `MDC.clear()` 누락되지 않도록 `finally` 정리.
+  - RuntimeException 처리 시 빈 로그/빈 메시지 반환되지 않도록 기본 오류 응답 보강.
+
+**Reason**:
+- 최근 이력 대비 실제 코드의 누락/불일치를 제거하고, 주석 기반 임시 구현이 아니라 실제 실행 가능한 환율 조회 동작으로 정합성을 맞추기 위함.
+
+**Validation**:
+- `./gradlew.bat -q compileJava` 성공
+- `https://open.er-api.com/v6/latest/USD` 응답 코드 200 확인
+- `http://localhost:8081/api/dashboard/exchange?base=USD&target=KRW` 호출 결과:
+  - `{"statusCd":200,"msgTyp":"S","errMsg":"","totalCount":1,"responseCount":1,"data":{"base":"USD","target":"KRW","rate":...}}`
+
+---
+
 ## [2026-02-10 16:43:46 KST] Gradle 설정 정리 및 공통 예외 처리 구조 반영
 
 **Type**: 수정

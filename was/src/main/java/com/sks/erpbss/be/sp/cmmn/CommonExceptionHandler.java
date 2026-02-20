@@ -3,7 +3,6 @@ package com.sks.erpbss.be.sp.cmmn;
 import com.sks.erpbss.be.sp.cntrt.subscmmn.component.ComponentException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
-import java.io.StringWriter;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +37,25 @@ public class CommonExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
+    private String resolveMessage(String messageKeyOrText, Object[] params) {
+        if (messageKeyOrText == null || messageKeyOrText.isBlank()) {
+            return HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+        }
+
+        Object[] resolvedParams = (params == null) ? new Object[] {} : params;
+        String localized = messageSource.getMessage(
+            messageKeyOrText,
+            resolvedParams,
+            messageKeyOrText,
+            Locale.getDefault()
+        );
+
+        if (localized == null || localized.isBlank()) {
+            return messageKeyOrText;
+        }
+        return localized;
+    }
+
     // 모든 예외 처리 공통으로 요청 식별 정보를 MDC에 기록한다.
     // 로그 집계 시스템에서 reqId/uri/method 기준으로 추적하기 위한 목적이다.
     void makeMdc(HttpServletRequest req) {
@@ -48,65 +66,48 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(CommonException.class)
     public CommonResponse<Void> handleCommonException(CommonException e, HttpServletRequest req) {
-        String chngMsg = "";
-
         makeMdc(req);
-        log.error("statusCode={}, msgTyp={}, message={}", e.getStatusCode(), e.getMsgTyp(), e.getMessage());
+        try {
+            log.error("statusCode={}, msgTyp={}, message={}", e.getStatusCode(), e.getMsgTyp(), e.getMessage());
+            String chngMsg = resolveMessage(e.getMessage(), e.getMessageParams());
 
-        if (e.getMessageParams() != null && e.getMessageParams().length != 0) {
-            chngMsg = messageSource.getMessage(e.getMessage(), e.getMessageParams(), null, Locale.getDefault());
-        } else {
-            chngMsg = messageSource.getMessage(e.getMessage(), new Object[] {}, null, Locale.getDefault());
+            if (e.getMsgTyp().equals(CommonException.MsgTypEnum.TOAST.getKey())) {
+                return CommonResponse.toast(e.getStatusCode(), chngMsg);
+            }
+            return CommonResponse.error(e.getStatusCode(), chngMsg);
+        } finally {
+            MDC.clear();
         }
-
-        if (e.getMsgTyp().equals(CommonException.MsgTypEnum.TOAST.getKey())) {
-            return CommonResponse.toast(e.getStatusCode(), chngMsg);
-        }
-        // TODO(check): 이 핸들러 경로도 finally 또는 반환 직전에 MDC.clear()를 호출해 MDC 누수 없이 종료되는 구성이 일반적으로 맞습니다.
-        return CommonResponse.error(e.getStatusCode(), chngMsg);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public CommonResponse<Void> handleRuntimeException(RuntimeException e, HttpServletRequest req) {
-        String chngMsg = "";
-
-        // TODO(check): CommonException은 위의 전용 핸들러에서 처리하므로, RuntimeException 핸들러에서는 일반 RuntimeException만 처리되도록 분리하는 구성이 보통 더 명확합니다.
         if (e instanceof CommonException) {
             CommonException ce = (CommonException) e;
 
-            if (ce.getMessageParams() != null && ce.getMessageParams().length != 0) {
-                chngMsg = messageSource.getMessage(
-                    ce.getMessage(),
-                    ce.getMessageParams(),
-                    HttpStatus.CONFLICT.getReasonPhrase(),
-                    Locale.getDefault()
-                );
-            } else {
-                chngMsg = messageSource.getMessage(
-                    ce.getMessage(),
-                    new String[] {},
-                    HttpStatus.CONFLICT.getReasonPhrase(),
-                    Locale.getDefault()
-                );
-            }
-
             makeMdc(req);
-            log.error(e.getMessage());
-            MDC.clear();
+            try {
+                log.error(e.getMessage(), e);
+                String chngMsg = resolveMessage(ce.getMessage(), ce.getMessageParams());
 
-            if (ce.getMsgTyp().equals(CommonException.MsgTypEnum.TOAST.getKey())) {
-                return CommonResponse.toast(ce.getStatusCode(), chngMsg);
-            } else {
-                return CommonResponse.error(ce.getStatusCode(), chngMsg);
+                if (ce.getMsgTyp().equals(CommonException.MsgTypEnum.TOAST.getKey())) {
+                    return CommonResponse.toast(ce.getStatusCode(), chngMsg);
+                } else {
+                    return CommonResponse.error(ce.getStatusCode(), chngMsg);
+                }
+            } finally {
+                MDC.clear();
             }
 
         } else {
-            StringWriter sw = new StringWriter();
-            // TODO(check): StringWriter만 생성하면 로그가 비게 되므로, log.error("...", e) 또는 e.printStackTrace(new PrintWriter(sw)) 후 sw 로그가 맞습니다.
-            log.error(sw.toString());
+            makeMdc(req);
+            try {
+                log.error("Unhandled runtime exception", e);
+                return CommonResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            } finally {
+                MDC.clear();
+            }
         }
-        // TODO(check): 일반 RuntimeException 경로는 빈 문자열 대신 기본 메시지(예: HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())를 내려주는 구성이 안전합니다.
-        return CommonResponse.error(999, chngMsg);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

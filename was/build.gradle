@@ -51,7 +51,7 @@ dependencies {
     // 사진 기준 항목과 유사하게 유지하되, 폐쇄망/사내 환경에서만 활성화 권장:
     // implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${findProperty('mybatisSpringBootStarterVersion')}"
     // implementation "com.sap.cloud.db.jdbc:ngdbc:${findProperty('sapBtpNgdbcVersion')}"
-    // implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
     // implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${findProperty('springCircuitBreakerResilience4jVersion')}"
     // implementation "io.github.openfeign:feign-okhttp"
 
