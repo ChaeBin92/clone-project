@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
  * - 키 경로가 불일치하면 애플리케이션 기동 시 placeholder가 치환되지 않아
  *   "http://${...} is malformed" 오류가 발생할 수 있습니다.
  */
-@FeignClient(name = "exchangeRateClient", url = "${apim.api.exchange-rate-url}")
+@FeignClient(
+    name = "exchangeRateClient",
+    url = "${apim.api.exchange-rate-url}",
+    configuration = ExchangeRateFeignConfig.class
+)
 public interface ExchangeRateClient {
 
     @GetMapping("/latest/{base}")
