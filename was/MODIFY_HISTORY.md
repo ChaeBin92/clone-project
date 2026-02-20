@@ -232,3 +232,26 @@
   - Ïã§Ìå® ÏõêÏù∏: Î°úÏª¨ JVM 8, ÌîÑÎ°úÏ†ùÌä∏ ÏöîÍµ¨ÏÇ¨Ìï≠ÏùÄ Java 17+
 
 ---
+# #   [ 2 0 2 6 - 0 2 - 2 0   1 7 : 1 1 : 1 9   K S T ]   X÷(«  p»å÷  0Æ•≤  Læ‹¥  H≈»T÷
+ 
+ * * T y p e * * :   ¬»/ ÙºD∆
+ 
+ * * A f f e c t e d   F i l e s * * : 
+ -   \ s r c / m a i n / j a v a / c o m / s k s / e r p b s s / b e / s p / d a s h b o a r d / d t o / E x c h a n g e R D t o . j a v a \ 
+ -   \ s r c / m a i n / j a v a / c o m / s k s / e r p b s s / b e / s p / d a s h b o a r d / d t o / E x c h a n g e S D t o . j a v a \ 
+ -   \ s r c / m a i n / j a v a / c o m / s k s / e r p b s s / b e / s p / d a s h b o a r d / s e r v i c e / D a s h b o a r d S e r v i c e . j a v a \ 
+ 
+ * * C h a n g e s * * : 
+ -   D T O ‰¥–≈  \ @ N o A r g s C o n s t r u c t o r \ ,   \ @ A l l A r g s C o n s t r u c t o r \ ,   \ @ B u i l d e r \   Ò¥  l∏ıº  ¥≈x±L—t«X¡  Ùº¨  ( S p r i n g   ”|∑¯ª0—  ºx«)µ  $∆Xπ  )º¿…) 
+ -   \ D a s h b o a r d S e r v i c e \   ¥∞  Ö«%∏¨( b a s e ,   t a r g e t )   n u l l   ¥Ãl–  º   ≥8ªê«  ¿ºX÷( t o U p p e r C a s e )    «®÷1¡  \∏¡…  îÕ ¨
+ 
+ * * R e a s o n * * : 
+ \∏ÏŒ  X÷Ω¨  Læ‹¥  ò”|«  º  ∑¿–Ñ«  ºx«)µ  $∆Xπ  t’∞¨
+ 
+ * * A I   C o l l a b o r a t o r * * : 
+ -   S u g g e s t e d   b y :   G e m i n i 
+ -   M o d e l   u s e d :   g e m i n i - 2 . 5 - p r o 
+ -   V a l i d a t i o n   s t a t u s :   P A S S   ( B u i l d   &   R u n   S u c c e s s ) 
+ 
+ - - -  
+ 
